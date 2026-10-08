@@ -43,7 +43,7 @@ var bra_default = "data:image/svg+xml,%3c?xml%20version='1.0'%20encoding='utf-8'
 var ss_default = "/assets/ss-CDmv5OXS.png";
 //#endregion
 //#region src/assets/sratlas.png
-var sratlas_default = "/assets/sratlas-Duvz5KRw.png";
+var sratlas_default = "/assets/sratlas-zVYd5SCK.png";
 //#endregion
 //#region src/assets/templo.png
 var templo_default = "/assets/templo-lp_Ntac2.png";
