@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
-  <title id="title">Portfólio de Lucas Ribeiro</title>
-  <desc id="desc">Imagem de compartilhamento de Lucas Ribeiro, Engenheiro de Software Sênior.</desc>
+  <title id="title">Lucas Ribeiro Portfolio</title>
+  <desc id="desc">Social preview image for Lucas Ribeiro, Senior Software Engineer.</desc>
   <rect width="1200" height="630" fill="#181A1D"/>
   <path d="M0 520C150 470 250 595 420 540C570 492 710 410 870 450C1010 485 1085 570 1200 532V630H0Z" fill="#22262B"/>
   <circle cx="980" cy="130" r="170" fill="#91ABC4" opacity=".14"/>
   <circle cx="160" cy="500" r="220" fill="#91ABC4" opacity=".1"/>
-  <text x="96" y="190" fill="#B1B7C0" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" letter-spacing="3">ENGENHEIRO DE SOFTWARE SÊNIOR</text>
+  <text x="96" y="190" fill="#B1B7C0" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" letter-spacing="3">SENIOR SOFTWARE ENGINEER</text>
   <text x="94" y="305" fill="#ECEDEF" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="800">Lucas Ribeiro</text>
-  <text x="100" y="390" fill="#B1B7C0" font-family="Arial, Helvetica, sans-serif" font-size="38">React, TypeScript e produtos web</text>
+  <text x="100" y="390" fill="#B1B7C0" font-family="Arial, Helvetica, sans-serif" font-size="38">React, TypeScript and web products</text>
   <rect x="100" y="455" width="296" height="58" rx="29" fill="#91ABC4"/>
   <text x="132" y="493" fill="#181A1D" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700">lucasrib.dev</text>
 </svg>

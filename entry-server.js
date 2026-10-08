@@ -1,10 +1,10 @@
 import { renderToString } from "react-dom/server";
-import { ArrowUpRight, BarChart3, BriefcaseBusiness, Download, FolderGit2, Gamepad2, Github, HeartHandshake, Linkedin, Mail, ShieldCheck, X } from "lucide-react";
+import { ArrowUpRight, BarChart3, FolderGit2, Github, Linkedin, Mail, ShieldCheck, X } from "lucide-react";
 import { motion, useInView } from "motion/react";
-import * as React$2 from "react";
-import React, { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import * as React$1 from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
-import { AWS, Cypress, Electron, GoogleCloud, Jest, NestJS, NextJs, NodeJs, PostgreSQL, Prisma, React as React$1, ReactQuery, Storybook, Supabase, TailwindCSS, TypeScript, Zod } from "developer-icons";
+import { NestJS, NextJs, NodeJs, React, TypeScript } from "developer-icons";
 //#region src/components/TextFade.tsx
 function TextFade({ direction, children, className = "", staggerChildren = .1 }) {
 	const FADE_DOWN = {
@@ -18,7 +18,7 @@ function TextFade({ direction, children, className = "", staggerChildren = .1 })
 			y: direction === "down" ? -18 : 18
 		}
 	};
-	const ref = React$2.useRef(null);
+	const ref = React$1.useRef(null);
 	const isInView = useInView(ref, { once: true });
 	return /* @__PURE__ */ jsx(motion.div, {
 		ref,
@@ -29,323 +29,21 @@ function TextFade({ direction, children, className = "", staggerChildren = .1 })
 			show: { transition: { staggerChildren } }
 		},
 		className,
-		children: React$2.Children.map(children, (child) => React$2.isValidElement(child) ? /* @__PURE__ */ jsx(motion.div, {
+		children: React$1.Children.map(children, (child) => React$1.isValidElement(child) ? /* @__PURE__ */ jsx(motion.div, {
 			variants: FADE_DOWN,
 			children: child
 		}) : child)
 	});
 }
 //#endregion
-//#region src/components/LogoLoop.tsx
-var ANIMATION_CONFIG = {
-	SMOOTH_TAU: .25,
-	MIN_COPIES: 2,
-	COPY_HEADROOM: 2
-};
-var toCssLength = (value) => typeof value === "number" ? `${value}px` : value ?? void 0;
-var cx = (...parts) => parts.filter(Boolean).join(" ");
-var isNodeLogoItem = (item) => "node" in item;
-var useResizeObserver = (callback, containerRef, seqRef, logos, gap, logoHeight, isVertical) => {
-	useEffect(() => {
-		if (!window.ResizeObserver) {
-			const handleResize = () => callback();
-			window.addEventListener("resize", handleResize);
-			callback();
-			return () => window.removeEventListener("resize", handleResize);
-		}
-		const observers = [containerRef, seqRef].map((ref) => {
-			if (!ref.current) return null;
-			const observer = new ResizeObserver(callback);
-			observer.observe(ref.current);
-			return observer;
-		});
-		callback();
-		return () => {
-			observers.forEach((observer) => observer?.disconnect());
-		};
-	}, [
-		callback,
-		containerRef,
-		seqRef,
-		logos,
-		gap,
-		logoHeight,
-		isVertical
-	]);
-};
-var useImageLoader = (seqRef, onLoad, logos, gap, logoHeight, isVertical) => {
-	useEffect(() => {
-		const images = seqRef.current?.querySelectorAll("img") ?? [];
-		if (images.length === 0) {
-			onLoad();
-			return;
-		}
-		let remainingImages = images.length;
-		const handleImageLoad = () => {
-			remainingImages -= 1;
-			if (remainingImages === 0) onLoad();
-		};
-		images.forEach((img) => {
-			const htmlImg = img;
-			if (htmlImg.complete) handleImageLoad();
-			else {
-				htmlImg.addEventListener("load", handleImageLoad, { once: true });
-				htmlImg.addEventListener("error", handleImageLoad, { once: true });
-			}
-		});
-		return () => {
-			images.forEach((img) => {
-				img.removeEventListener("load", handleImageLoad);
-				img.removeEventListener("error", handleImageLoad);
-			});
-		};
-	}, [
-		seqRef,
-		onLoad,
-		logos,
-		gap,
-		logoHeight,
-		isVertical
-	]);
-};
-var useAnimationLoop = (trackRef, targetVelocity, seqWidth, seqHeight, isHovered, hoverSpeed, isVertical) => {
-	const rafRef = useRef(null);
-	const lastTimestampRef = useRef(null);
-	const offsetRef = useRef(0);
-	const velocityRef = useRef(0);
-	useEffect(() => {
-		const track = trackRef.current;
-		if (!track) return;
-		const prefersReduced = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-		const seqSize = isVertical ? seqHeight : seqWidth;
-		if (seqSize > 0) {
-			offsetRef.current = (offsetRef.current % seqSize + seqSize) % seqSize;
-			const transformValue = isVertical ? `translate3d(0, ${-offsetRef.current}px, 0)` : `translate3d(${-offsetRef.current}px, 0, 0)`;
-			track.style.transform = transformValue;
-		}
-		if (prefersReduced) {
-			track.style.transform = isVertical ? "translate3d(0, 0, 0)" : "translate3d(0, 0, 0)";
-			return () => {
-				lastTimestampRef.current = null;
-			};
-		}
-		const animate = (timestamp) => {
-			if (lastTimestampRef.current === null) lastTimestampRef.current = timestamp;
-			const deltaTime = Math.max(0, timestamp - lastTimestampRef.current) / 1e3;
-			lastTimestampRef.current = timestamp;
-			const target = isHovered && hoverSpeed !== void 0 ? hoverSpeed : targetVelocity;
-			const easingFactor = 1 - Math.exp(-deltaTime / ANIMATION_CONFIG.SMOOTH_TAU);
-			velocityRef.current += (target - velocityRef.current) * easingFactor;
-			if (seqSize > 0) {
-				let nextOffset = offsetRef.current + velocityRef.current * deltaTime;
-				nextOffset = (nextOffset % seqSize + seqSize) % seqSize;
-				offsetRef.current = nextOffset;
-				const transformValue = isVertical ? `translate3d(0, ${-offsetRef.current}px, 0)` : `translate3d(${-offsetRef.current}px, 0, 0)`;
-				track.style.transform = transformValue;
-			}
-			rafRef.current = requestAnimationFrame(animate);
-		};
-		rafRef.current = requestAnimationFrame(animate);
-		return () => {
-			if (rafRef.current !== null) {
-				cancelAnimationFrame(rafRef.current);
-				rafRef.current = null;
-			}
-			lastTimestampRef.current = null;
-		};
-	}, [
-		trackRef,
-		targetVelocity,
-		seqWidth,
-		seqHeight,
-		isHovered,
-		hoverSpeed,
-		isVertical
-	]);
-};
-var LogoLoop = React.memo(({ logos, speed = 120, direction = "left", width = "100%", logoHeight = 28, gap = 32, pauseOnHover, hoverSpeed, fadeOut = false, fadeOutColor, scaleOnHover = false, renderItem, ariaLabel = "Partner logos", className, style }) => {
-	const containerRef = useRef(null);
-	const trackRef = useRef(null);
-	const seqRef = useRef(null);
-	const [seqWidth, setSeqWidth] = useState(0);
-	const [seqHeight, setSeqHeight] = useState(0);
-	const [copyCount, setCopyCount] = useState(ANIMATION_CONFIG.MIN_COPIES);
-	const [isHovered, setIsHovered] = useState(false);
-	const effectiveHoverSpeed = useMemo(() => {
-		if (hoverSpeed !== void 0) return hoverSpeed;
-		if (pauseOnHover === true) return 0;
-		if (pauseOnHover === false) return void 0;
-		return 0;
-	}, [hoverSpeed, pauseOnHover]);
-	const isVertical = direction === "up" || direction === "down";
-	const targetVelocity = useMemo(() => {
-		const magnitude = Math.abs(speed);
-		let directionMultiplier;
-		if (isVertical) directionMultiplier = direction === "up" ? 1 : -1;
-		else directionMultiplier = direction === "left" ? 1 : -1;
-		const speedMultiplier = speed < 0 ? -1 : 1;
-		return magnitude * directionMultiplier * speedMultiplier;
-	}, [
-		speed,
-		direction,
-		isVertical
-	]);
-	const updateDimensions = useCallback(() => {
-		const containerWidth = containerRef.current?.clientWidth ?? 0;
-		const sequenceRect = seqRef.current?.getBoundingClientRect?.();
-		const sequenceWidth = sequenceRect?.width ?? 0;
-		const sequenceHeight = sequenceRect?.height ?? 0;
-		if (isVertical) {
-			const parentHeight = containerRef.current?.parentElement?.clientHeight ?? 0;
-			if (containerRef.current && parentHeight > 0) {
-				const targetHeight = Math.ceil(parentHeight);
-				if (containerRef.current.style.height !== `${targetHeight}px`) containerRef.current.style.height = `${targetHeight}px`;
-			}
-			if (sequenceHeight > 0) {
-				setSeqHeight(Math.ceil(sequenceHeight));
-				const viewport = containerRef.current?.clientHeight ?? parentHeight ?? sequenceHeight;
-				const copiesNeeded = Math.ceil(viewport / sequenceHeight) + ANIMATION_CONFIG.COPY_HEADROOM;
-				setCopyCount(Math.max(ANIMATION_CONFIG.MIN_COPIES, copiesNeeded));
-			}
-		} else if (sequenceWidth > 0) {
-			setSeqWidth(Math.ceil(sequenceWidth));
-			const copiesNeeded = Math.ceil(containerWidth / sequenceWidth) + ANIMATION_CONFIG.COPY_HEADROOM;
-			setCopyCount(Math.max(ANIMATION_CONFIG.MIN_COPIES, copiesNeeded));
-		}
-	}, [isVertical]);
-	useResizeObserver(updateDimensions, containerRef, seqRef, logos, gap, logoHeight, isVertical);
-	useImageLoader(seqRef, updateDimensions, logos, gap, logoHeight, isVertical);
-	useAnimationLoop(trackRef, targetVelocity, seqWidth, seqHeight, isHovered, effectiveHoverSpeed, isVertical);
-	const cssVariables = useMemo(() => ({
-		"--logoloop-gap": `${gap}px`,
-		"--logoloop-logoHeight": `${logoHeight}px`,
-		...fadeOutColor && { "--logoloop-fadeColor": fadeOutColor }
-	}), [
-		gap,
-		logoHeight,
-		fadeOutColor
-	]);
-	const rootClasses = useMemo(() => cx("relative group", isVertical ? "overflow-hidden h-full inline-block" : "overflow-x-hidden", "[--logoloop-gap:32px]", "[--logoloop-logoHeight:28px]", "[--logoloop-fadeColorAuto:#ffffff]", "dark:[--logoloop-fadeColorAuto:#0b0b0b]", scaleOnHover && "py-[calc(var(--logoloop-logoHeight)*0.1)]", className), [
-		isVertical,
-		scaleOnHover,
-		className
-	]);
-	const handleMouseEnter = useCallback(() => {
-		if (effectiveHoverSpeed !== void 0) setIsHovered(true);
-	}, [effectiveHoverSpeed]);
-	const handleMouseLeave = useCallback(() => {
-		if (effectiveHoverSpeed !== void 0) setIsHovered(false);
-	}, [effectiveHoverSpeed]);
-	const renderLogoItem = useCallback((item, key, isDuplicate) => {
-		if (renderItem) return /* @__PURE__ */ jsx("li", {
-			className: cx("flex-none text-[length:var(--logoloop-logoHeight)] leading-[1]", isVertical ? "mb-[var(--logoloop-gap)]" : "mr-[var(--logoloop-gap)]", scaleOnHover && "overflow-visible group/item"),
-			role: "listitem",
-			children: renderItem(item, key)
-		}, key);
-		const isNodeItem = isNodeLogoItem(item);
-		const itemTitle = isNodeItem ? item.title : item.title ?? item.alt;
-		const itemAriaLabel = isNodeItem ? item.ariaLabel ?? item.title : item.alt ?? item.title;
-		const visual = isNodeItem ? /* @__PURE__ */ jsx("span", {
-			"aria-hidden": !!itemTitle,
-			children: item.node
-		}) : /* @__PURE__ */ jsx("img", {
-			className: cx("h-[1em] w-auto block object-contain", "[-webkit-user-drag:none] pointer-events-none", "[image-rendering:-webkit-optimize-contrast]"),
-			src: item.src,
-			srcSet: item.srcSet,
-			sizes: item.sizes,
-			width: item.width,
-			height: item.height,
-			alt: itemTitle ? "" : item.alt ?? "",
-			title: item.title,
-			loading: "lazy",
-			decoding: "async",
-			draggable: false
-		});
-		const content = /* @__PURE__ */ jsxs("span", {
-			className: cx("inline-flex items-center gap-3 whitespace-nowrap", "motion-reduce:transition-none", scaleOnHover && "transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120"),
-			children: [/* @__PURE__ */ jsx("span", {
-				className: "inline-flex h-[var(--logoloop-logoHeight)] items-center text-[length:var(--logoloop-logoHeight)] leading-none",
-				children: visual
-			}), itemTitle && /* @__PURE__ */ jsx("span", {
-				className: "text-base font-medium leading-none text-muted-foreground",
-				children: itemTitle
-			})]
-		});
-		const inner = item.href ? /* @__PURE__ */ jsx("a", {
-			className: cx("inline-flex items-center no-underline rounded", "transition-opacity duration-200 ease-linear", "hover:opacity-80", "focus-visible:outline focus-visible:outline-current focus-visible:outline-offset-2"),
-			href: item.href,
-			"aria-label": itemAriaLabel || "logo link",
-			target: "_blank",
-			rel: "noreferrer noopener",
-			tabIndex: isDuplicate ? -1 : void 0,
-			children: content
-		}) : content;
-		return /* @__PURE__ */ jsx("li", {
-			className: cx("flex-none text-[length:var(--logoloop-logoHeight)] leading-[1]", isVertical ? "mb-[var(--logoloop-gap)]" : "mr-[var(--logoloop-gap)]", scaleOnHover && "overflow-visible group/item"),
-			role: "listitem",
-			children: inner
-		}, key);
-	}, [
-		isVertical,
-		scaleOnHover,
-		renderItem
-	]);
-	const logoLists = useMemo(() => Array.from({ length: copyCount }, (_, copyIndex) => /* @__PURE__ */ jsx("ul", {
-		className: cx("flex items-center", isVertical && "flex-col"),
-		role: "list",
-		"aria-hidden": copyIndex > 0,
-		inert: copyIndex > 0 ? true : void 0,
-		ref: copyIndex === 0 ? seqRef : void 0,
-		children: logos.map((item, itemIndex) => renderLogoItem(item, `${copyIndex}-${itemIndex}`, copyIndex > 0))
-	}, `copy-${copyIndex}`)), [
-		copyCount,
-		logos,
-		renderLogoItem,
-		isVertical
-	]);
-	return /* @__PURE__ */ jsxs("div", {
-		ref: containerRef,
-		className: rootClasses,
-		style: useMemo(() => ({
-			width: isVertical ? toCssLength(width) === "100%" ? void 0 : toCssLength(width) : toCssLength(width) ?? "100%",
-			...cssVariables,
-			...style
-		}), [
-			width,
-			cssVariables,
-			style,
-			isVertical
-		]),
-		role: "region",
-		"aria-label": ariaLabel,
-		children: [fadeOut && /* @__PURE__ */ jsx(Fragment, { children: isVertical ? /* @__PURE__ */ jsxs(Fragment, { children: [/* @__PURE__ */ jsx("div", {
-			"aria-hidden": true,
-			className: cx("pointer-events-none absolute inset-x-0 top-0 z-10", "h-[clamp(24px,8%,120px)]", "bg-[linear-gradient(to_bottom,var(--logoloop-fadeColor,var(--logoloop-fadeColorAuto))_0%,rgba(0,0,0,0)_100%)]")
-		}), /* @__PURE__ */ jsx("div", {
-			"aria-hidden": true,
-			className: cx("pointer-events-none absolute inset-x-0 bottom-0 z-10", "h-[clamp(24px,8%,120px)]", "bg-[linear-gradient(to_top,var(--logoloop-fadeColor,var(--logoloop-fadeColorAuto))_0%,rgba(0,0,0,0)_100%)]")
-		})] }) : /* @__PURE__ */ jsxs(Fragment, { children: [/* @__PURE__ */ jsx("div", {
-			"aria-hidden": true,
-			className: cx("pointer-events-none absolute inset-y-0 left-0 z-11", "w-[clamp(24px,8%,120px)]", "bg-[linear-gradient(to_right,var(--logoloop-fadeColor,var(--logoloop-fadeColorAuto))_0%,rgba(0,0,0,0)_100%)]")
-		}), /* @__PURE__ */ jsx("div", {
-			"aria-hidden": true,
-			className: cx("pointer-events-none absolute inset-y-0 right-0 z-11", "w-[clamp(24px,8%,120px)]", "bg-[linear-gradient(to_left,var(--logoloop-fadeColor,var(--logoloop-fadeColorAuto))_0%,rgba(0,0,0,0)_100%)]")
-		})] }) }), /* @__PURE__ */ jsx("div", {
-			className: cx("flex will-change-transform select-none relative z-10", "motion-reduce:transform-none", isVertical ? "flex-col h-max w-full" : "flex-row w-max"),
-			ref: trackRef,
-			onMouseEnter: handleMouseEnter,
-			onMouseLeave: handleMouseLeave,
-			children: logoLists
-		})]
-	});
-});
-LogoLoop.displayName = "LogoLoop";
-//#endregion
 //#region src/assets/bra.svg
 var bra_default = "data:image/svg+xml,%3c?xml%20version='1.0'%20encoding='utf-8'?%3e%3c!--%20Uploaded%20to:%20SVG%20Repo,%20www.svgrepo.com,%20Generator:%20SVG%20Repo%20Mixer%20Tools%20--%3e%3csvg%20width='800px'%20height='800px'%20viewBox='0%200%2036%2036'%20xmlns='http://www.w3.org/2000/svg'%20xmlns:xlink='http://www.w3.org/1999/xlink'%20aria-hidden='true'%20role='img'%20class='iconify%20iconify--twemoji'%20preserveAspectRatio='xMidYMid%20meet'%3e%3cpath%20fill='%23009B3A'%20d='M36%2027a4%204%200%200%201-4%204H4a4%204%200%200%201-4-4V9a4%204%200%200%201%204-4h28a4%204%200%200%201%204%204v18z'%3e%3c/path%3e%3cpath%20fill='%23FEDF01'%20d='M32.728%2018L18%2029.124L3.272%2018L18%206.875z'%3e%3c/path%3e%3ccircle%20fill='%23002776'%20cx='17.976'%20cy='17.924'%20r='6.458'%3e%3c/circle%3e%3cpath%20fill='%23CBE9D4'%20d='M12.277%2014.887a6.406%206.406%200%200%200-.672%202.023c3.995-.29%209.417%201.891%2011.744%204.595c.402-.604.7-1.28.883-2.004c-2.872-2.808-7.917-4.63-11.955-4.614z'%3e%3c/path%3e%3cpath%20fill='%2388C9F9'%20d='M12%2018.233h1v1h-1zm1%202h1v1h-1z'%3e%3c/path%3e%3cpath%20fill='%2355ACEE'%20d='M15%2018.233h1v1h-1zm2%201h1v1h-1zm4%202h1v1h-1zm-3%201h1v1h-1zm3-6h1v1h-1z'%3e%3c/path%3e%3cpath%20fill='%233B88C3'%20d='M19%2020.233h1v1h-1z'%3e%3c/path%3e%3c/svg%3e";
 //#endregion
 //#region src/assets/ss.png
 var ss_default = "/assets/ss-CDmv5OXS.png";
+//#endregion
+//#region src/assets/sratlas.png
+var sratlas_default = "/assets/sratlas-Duvz5KRw.png";
 //#endregion
 //#region src/assets/templo.png
 var templo_default = "/assets/templo-lp_Ntac2.png";
@@ -395,6 +93,14 @@ function getServerConsentSnapshot() {
 }
 function LegalDialog({ onClose, text, view }) {
 	const content = text.legal[view];
+	const closeButtonRef = useRef(null);
+	useEffect(() => {
+		const opener = document.activeElement;
+		closeButtonRef.current?.focus();
+		return () => {
+			if (opener instanceof HTMLElement && opener.isConnected) opener.focus();
+		};
+	}, []);
 	return /* @__PURE__ */ jsx("div", {
 		className: "fixed inset-0 z-50 flex items-end bg-background/75 px-4 py-5 backdrop-blur-sm sm:items-center sm:justify-center",
 		role: "presentation",
@@ -405,6 +111,16 @@ function LegalDialog({ onClose, text, view }) {
 			className: "max-h-[86vh] w-full max-w-2xl overflow-y-auto rounded-lg border border-border bg-card p-5 shadow-2xl sm:p-6",
 			role: "dialog",
 			onClick: (event) => event.stopPropagation(),
+			onKeyDown: (event) => {
+				if (event.key === "Escape") {
+					event.preventDefault();
+					event.stopPropagation();
+					onClose();
+				} else if (event.key === "Tab") {
+					event.preventDefault();
+					closeButtonRef.current?.focus();
+				}
+			},
 			children: [/* @__PURE__ */ jsxs("div", {
 				className: "flex items-start justify-between gap-4",
 				children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("p", {
@@ -415,11 +131,12 @@ function LegalDialog({ onClose, text, view }) {
 					className: "mt-2 text-xl font-semibold text-foreground",
 					children: content.title
 				})] }), /* @__PURE__ */ jsx("button", {
+					ref: closeButtonRef,
 					type: "button",
 					"aria-label": text.closeLabel,
 					title: text.closeLabel,
 					onClick: onClose,
-					className: "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+					className: "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-input text-muted-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
 					children: /* @__PURE__ */ jsx(X, { className: "h-4 w-4" })
 				})]
 			}), /* @__PURE__ */ jsx("div", {
@@ -482,12 +199,12 @@ function CookieConsent({ text }) {
 				className: "flex shrink-0 flex-col gap-2 sm:flex-row",
 				children: [/* @__PURE__ */ jsx("button", {
 					type: "button",
-					className: "inline-flex items-center justify-center rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+					className: "inline-flex items-center justify-center rounded-full border border-input px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
 					onClick: () => handleConsent("rejected"),
 					children: text.rejectLabel
 				}), /* @__PURE__ */ jsxs("button", {
 					type: "button",
-					className: "inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+					className: "inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
 					onClick: () => handleConsent("accepted"),
 					children: [/* @__PURE__ */ jsx(ShieldCheck, { className: "h-4 w-4" }), text.acceptLabel]
 				})]
@@ -525,45 +242,25 @@ function LegalLinks({ text }) {
 var translations = {
 	pt: {
 		languageToggleLabel: "Trocar idioma para inglês",
-		role: "Engenheiro Frontend Sênior",
+		role: "Engenheiro de Software Sênior",
 		hero: {
-			greeting: "Olá, eu sou",
+			greeting: "Olá, sou o Lucas!",
 			summary: [
-				{ text: "Desenvolvendo " },
+				{ text: "Tenho " },
 				{
-					text: "plataformas escaláveis",
+					text: "mais de 7 anos de experiência",
 					highlight: true
 				},
-				{ text: ", " },
+				{ text: " no desenvolvimento de aplicações web com " },
 				{
-					text: "arquiteturas frontend distribuídas",
+					text: "React, TypeScript e Next.js",
 					highlight: true
 				},
-				{ text: " e " },
-				{
-					text: "aplicações web de alta performance",
-					highlight: true
-				},
-				{ text: " com " },
-				{
-					text: "TypeScript",
-					highlight: true
-				},
-				{ text: " e " },
-				{
-					text: "React",
-					highlight: true
-				},
-				{ text: " há mais de " },
-				{
-					text: "7 anos",
-					highlight: true
-				},
-				{ text: "." }
+				{ text: ". Atuo no Front-End e no Back-End, da arquitetura das aplicações ao deploy." }
 			]
 		},
-		downloadResume: "Baixar currículo",
-		viewPdf: "ver currículo",
+		stackLabel: "Tecnologias com que trabalho",
+		exploreProjects: "Ver projetos",
 		experience: "Experiência",
 		featuredProjects: "Projetos Selecionados",
 		viewAll: "Ver projetos",
@@ -573,45 +270,56 @@ var translations = {
 			label: "Projetos",
 			value: "Ver repositórios"
 		} },
-		featured: [{
-			id: "templo",
-			title: "Templo",
-			description: "Plataforma para descoberta de comunidades, clãs e grupos de jogadores, com autenticação via Discord, busca avançada, filtros inteligentes, métricas de relevância e navegação otimizada com scroll infinito. A experiência foi projetada para facilitar conexões entre jogadores com interesses em comum."
-		}, {
-			id: "social-skate",
-			title: "Social Skate",
-			description: "Plataforma institucional desenvolvida para a ONG Social Skate utilizando arquitetura serverless e Decap CMS com fluxo de conteúdo baseado em Git. O projeto foi pensado para oferecer alta performance, baixo custo operacional e autonomia na gestão de conteúdo."
-		}],
+		featured: [
+			{
+				id: "sratlas",
+				title: "SRAtlas",
+				imageAlt: "Mapa interativo do SRAtlas com filtros e pontos de interesse",
+				description: "Desenvolvi o SRAtlas para consultar milhares de pontos de interesse de Soul’s Remnant, com busca, filtros e múltiplos mapas. Estruturei os dados, construí a interface e fiz o deploy do mapa interativo."
+			},
+			{
+				id: "templo",
+				title: "Templo",
+				imageAlt: "Interface da plataforma de comunidades Templo",
+				description: "Desenvolvi o Templo para criar e encontrar comunidades, clãs e guildas. A aplicação reúne perfis, anúncios, feed e filtros. Também implementei a autenticação e as políticas de acesso aos dados."
+			},
+			{
+				id: "social-skate",
+				title: "Social Skate",
+				imageAlt: "Página inicial do portal Social Skate",
+				description: "Desenvolvi o portal institucional da ONG Social Skate para apresentar projetos, notícias, informações de transparência e formas de apoio. O conteúdo é versionado em Git, e a equipe pode atualizá-lo com autonomia. O projeto tem foco em performance e baixo custo operacional."
+			}
+		],
 		experienceItems: [
 			{
-				company: "Arcotech",
-				role: "Engenheiro de Software III",
-				period: "2024 - 2025",
+				company: "RibeiroTech",
+				role: "Engenheiro de Software Sênior | Fundador",
+				period: "11/2025 – 10/2026",
+				location: "Remoto",
+				url: "#projects",
+				description: "Desenvolvi aplicações web com React, TypeScript, Node.js e Supabase, da arquitetura ao deploy. Usei agentes de IA para desenvolver funcionalidades, revisar código e automatizar tarefas."
+			},
+			{
+				company: "Arco Educação",
+				role: "Engenheiro de Software Sênior",
+				period: "09/2024 – 11/2025",
 				location: "Remoto",
 				url: "https://www.arcoeducacao.com.br/",
-				description: "Projetei e mantive uma arquitetura distribuída de micro-frontends com React, TypeScript, Webpack Module Federation e bibliotecas compartilhadas, permitindo deploys independentes entre squads. Também implementei mecanismos de prevenção à fraude e validação de integridade de dados para aumentar a confiabilidade de plataformas educacionais de larga escala."
+				description: "Desenvolvi funcionalidades com React, TypeScript, micro-frontends e Node.js/NestJS. Criei pacotes e componentes compartilhados por mais de 15 desenvolvedores, entre diferentes times e aplicações."
 			},
 			{
 				company: "Alliança",
 				role: "Engenheiro Frontend Sênior",
-				period: "2022 - 2024",
+				period: "01/2022 – 09/2024",
 				location: "Remoto",
 				url: "https://www.cdb.com.br/",
-				description: "Liderei a arquitetura e o desenvolvimento frontend de uma plataforma SaaS para o setor de saúde, com foco em dados sensíveis, escalabilidade e evolução contínua do produto. Atuei em interfaces seguras e performáticas para fluxos operacionais de larga escala, colaborando com produto e backend para melhorar confiabilidade, eficiência e conformidade regulatória."
-			},
-			{
-				company: "BBL e-SPORTS",
-				role: "Engenheiro Frontend Pleno",
-				period: "2019 - 2021",
-				location: "São Paulo, Brasil",
-				url: "https://bbl.gg/",
-				description: "Desenvolvi plataformas web de alto tráfego para eventos de e-sports, com foco em performance, escalabilidade e experiência do usuário. Construí interfaces em tempo real preparadas para picos elevados de acesso durante transmissões e eventos ao vivo, contribuindo para estabilidade e alta disponibilidade das aplicações."
+				description: "Fui referência técnica para cerca de 5 desenvolvedores em decisões de arquitetura e code reviews. Trabalhei em formulários digitais e agendamento de exames com React, TypeScript, Node.js e NestJS."
 			}
 		],
 		cookieConsent: {
 			ariaLabel: "Consentimento de cookies",
-			title: "Cookies de analytics",
-			description: "Uso cookies e tecnologias similares apenas para entender visitas, páginas acessadas e melhorar este portfolio. O analytics só é ativado se você aceitar.",
+			title: "Cookies",
+			description: "Uso cookies e tecnologias similares apenas para entender visitas, páginas acessadas e melhorar este portfólio. O analytics só é ativado se você aceitar.",
 			acceptLabel: "Aceitar analytics",
 			rejectLabel: "Recusar",
 			privacyLabel: "Política de privacidade",
@@ -645,7 +353,7 @@ var translations = {
 					sections: [
 						{
 							title: "Uso do site",
-							body: "Este portfolio apresenta experiências, projetos e formas de contato profissionais. Você pode navegar pelo conteúdo e acessar links externos por sua própria conta."
+							body: "Este portfólio apresenta experiências, projetos e formas de contato profissionais. Você pode navegar pelo conteúdo e acessar links externos por sua própria conta."
 						},
 						{
 							title: "Conteúdo e propriedade",
@@ -667,45 +375,25 @@ var translations = {
 	},
 	en: {
 		languageToggleLabel: "Switch language to Portuguese",
-		role: "Senior Frontend Engineer",
+		role: "Senior Software Engineer",
 		hero: {
-			greeting: "Hello, I'm",
+			greeting: "Hi, I’m Lucas!",
 			summary: [
-				{ text: "Developing " },
+				{ text: "I have " },
 				{
-					text: "scalable platforms",
+					text: "more than 7 years of experience",
 					highlight: true
 				},
-				{ text: ", " },
+				{ text: " developing web applications with " },
 				{
-					text: "distributed frontend architectures",
+					text: "React, TypeScript, and Next.js",
 					highlight: true
 				},
-				{ text: " and " },
-				{
-					text: "high-performance web applications",
-					highlight: true
-				},
-				{ text: " with " },
-				{
-					text: "TypeScript",
-					highlight: true
-				},
-				{ text: " and " },
-				{
-					text: "React",
-					highlight: true
-				},
-				{ text: " for over " },
-				{
-					text: "7 years",
-					highlight: true
-				},
-				{ text: "." }
+				{ text: ". I work across Front-End and Back-End, from application architecture to deployment." }
 			]
 		},
-		downloadResume: "Download resume",
-		viewPdf: "view resume",
+		stackLabel: "Technologies I work with",
+		exploreProjects: "View projects",
 		experience: "Experience",
 		featuredProjects: "Selected Work",
 		viewAll: "View projects",
@@ -715,39 +403,50 @@ var translations = {
 			label: "Projects",
 			value: "View repositories"
 		} },
-		featured: [{
-			id: "templo",
-			title: "Templo",
-			description: "Platform for discovering gaming communities, clans, and player groups, featuring Discord authentication, advanced search, intelligent filters, relevance metrics, and optimized infinite-scroll navigation. The experience was designed to help players connect through shared interests."
-		}, {
-			id: "social-skate",
-			title: "Social Skate",
-			description: "Institutional platform developed for the Social Skate NGO using a serverless architecture and Decap CMS with a Git-based content workflow. The project was designed to deliver high performance, low operational costs, and autonomous content management."
-		}],
+		featured: [
+			{
+				id: "sratlas",
+				title: "SRAtlas",
+				imageAlt: "SRAtlas interactive map with filters and points of interest",
+				description: "I developed SRAtlas to look up thousands of points of interest in Soul’s Remnant, with search, filters, and multiple maps. I structured the data, built the interface, and deployed the interactive map."
+			},
+			{
+				id: "templo",
+				title: "Templo",
+				imageAlt: "Templo community platform interface",
+				description: "I developed Templo to create and discover communities, clans, and guilds. The application brings together profiles, posts, a feed, and filters. I also implemented authentication and data access policies."
+			},
+			{
+				id: "social-skate",
+				title: "Social Skate",
+				imageAlt: "Social Skate website homepage",
+				description: "I built the Social Skate NGO’s website to present projects, news, transparency information, and ways to support the organization. Content is versioned in Git, and the team can update it independently. The project focuses on performance and low operating costs."
+			}
+		],
 		experienceItems: [
 			{
-				company: "Arcotech",
-				role: "Software Engineer III",
-				period: "2024 - 2025",
+				company: "RibeiroTech",
+				role: "Senior Software Engineer | Founder",
+				period: "Nov 2025 – Oct 2026",
+				location: "Remote",
+				url: "#projects",
+				description: "Built web applications with React, TypeScript, Node.js, and Supabase, from architecture to deployment. Used AI agents to develop features, review code, and automate tasks."
+			},
+			{
+				company: "Arco Educação",
+				role: "Senior Software Engineer",
+				period: "Sep 2024 – Nov 2025",
 				location: "Remote",
 				url: "https://www.arcoeducacao.com.br/",
-				description: "Designed and maintained a distributed micro-frontend architecture with React, TypeScript, Webpack Module Federation, and shared libraries, enabling independent deployments across squads. Also implemented fraud-prevention and data-integrity validation mechanisms to improve reliability across large-scale education platforms."
+				description: "Built features with React, TypeScript, micro-frontends, and Node.js/NestJS. Created shared packages and components used by 15+ developers across multiple teams and applications."
 			},
 			{
 				company: "Alliança",
 				role: "Senior Frontend Engineer",
-				period: "2022 - 2024",
+				period: "Jan 2022 – Sep 2024",
 				location: "Remote",
 				url: "https://www.cdb.com.br/",
-				description: "Led the frontend architecture and development of a healthcare SaaS platform, focused on sensitive data, scalability, and continuous product evolution. Built secure, high-performance interfaces for large-scale operational workflows while collaborating with product and backend teams to improve reliability, efficiency, and regulatory compliance."
-			},
-			{
-				company: "BBL e-SPORTS",
-				role: "Mid-Level Frontend Engineer",
-				period: "2019 - 2021",
-				location: "São Paulo, Brazil",
-				url: "https://bbl.gg/",
-				description: "Developed high-traffic web platforms for e-sports events, focused on performance, scalability, and user experience. Built real-time interfaces designed to handle major access peaks during broadcasts and live events, contributing to application stability and high availability."
+				description: "Supported around 5 developers with architecture decisions and code reviews as the team’s technical reference. Worked on digital forms and exam scheduling with React, TypeScript, Node.js, and NestJS."
 			}
 		],
 		cookieConsent: {
@@ -851,9 +550,12 @@ function useI18n(initialLocale) {
 		locale,
 		setLocale: useCallback((nextLocale) => {
 			storeLocale(nextLocale);
-			setLocale(nextLocale);
 			const nextPath = getLocalePath(nextLocale);
-			if (window.location.pathname !== nextPath) window.location.assign(nextPath);
+			if (window.location.pathname !== nextPath) {
+				window.location.assign(nextPath);
+				return;
+			}
+			setLocale(nextLocale);
 		}, []),
 		t: translations[locale]
 	};
@@ -884,18 +586,21 @@ var contactLinks = [
 		value: "github.com/lucasribdev",
 		href: "https://github.com/lucasribdev",
 		icon: Github
-	},
-	{
-		id: "projects",
-		href: githubRepoUrl,
-		icon: FolderGit2
 	}
 ];
-var resumeUrls = {
-	pt: "/software-engineer-br.pdf",
-	en: "/software-engineer-en.pdf"
-};
 var featuredMeta = {
+	sratlas: {
+		year: "2026",
+		stack: [
+			"React",
+			"TypeScript",
+			"Vite",
+			"Leaflet",
+			"Tailwind CSS"
+		],
+		url: "https://sratlas.com",
+		visual: "sratlas"
+	},
 	templo: {
 		year: "2026",
 		stack: [
@@ -906,7 +611,6 @@ var featuredMeta = {
 			"BFF",
 			"Cloudflare Workers"
 		],
-		icon: Gamepad2,
 		url: "https://templo.club",
 		visual: "templo"
 	},
@@ -920,125 +624,27 @@ var featuredMeta = {
 			"SEO",
 			"Cloudflare Pages"
 		],
-		icon: HeartHandshake,
 		url: "https://socialskate.pages.dev/",
 		visual: "social"
 	}
 };
-var techLogos = [
-	{
-		node: /* @__PURE__ */ jsx(React$1, { size: 30 }),
-		title: "React",
-		href: "https://react.dev"
-	},
-	{
-		node: /* @__PURE__ */ jsx(NextJs, { size: 30 }),
-		title: "Next.js",
-		href: "https://nextjs.org"
-	},
-	{
-		node: /* @__PURE__ */ jsx(TypeScript, { size: 30 }),
-		title: "TypeScript",
-		href: "https://typescriptlang.org"
-	},
-	{
-		node: /* @__PURE__ */ jsx(TailwindCSS, { size: 30 }),
-		title: "Tailwind CSS",
-		href: "https://tailwindcss.com"
-	},
-	{
-		node: /* @__PURE__ */ jsx(ReactQuery, { size: 30 }),
-		title: "React Query",
-		href: "https://react-query.tanstack.com"
-	},
-	{
-		node: /* @__PURE__ */ jsx(Zod, { size: 30 }),
-		title: "Zod",
-		href: "https://zod.dev"
-	},
-	{
-		node: /* @__PURE__ */ jsx(Storybook, { size: 30 }),
-		title: "Storybook",
-		href: "https://storybook.js.org"
-	},
-	{
-		node: /* @__PURE__ */ jsx(NodeJs, { size: 30 }),
-		title: "Node.js",
-		href: "https://nodejs.org"
-	},
-	{
-		node: /* @__PURE__ */ jsx(NestJS, { size: 30 }),
-		title: "NestJS",
-		href: "https://nestjs.com"
-	},
-	{
-		node: /* @__PURE__ */ jsx(Prisma, { size: 30 }),
-		title: "Prisma",
-		href: "https://prisma.io"
-	},
-	{
-		node: /* @__PURE__ */ jsx(Supabase, { size: 30 }),
-		title: "Supabase",
-		href: "https://supabase.com"
-	},
-	{
-		node: /* @__PURE__ */ jsx(AWS, { size: 30 }),
-		title: "AWS",
-		href: "https://aws.amazon.com"
-	},
-	{
-		node: /* @__PURE__ */ jsx(GoogleCloud, { size: 30 }),
-		title: "Google Cloud",
-		href: "https://cloud.google.com"
-	},
-	{
-		node: /* @__PURE__ */ jsx(PostgreSQL, { size: 30 }),
-		title: "PostgreSQL",
-		href: "https://www.postgresql.org"
-	},
-	{
-		node: /* @__PURE__ */ jsx(Electron, { size: 30 }),
-		title: "Electron",
-		href: "https://www.electronjs.org"
-	},
-	{
-		node: /* @__PURE__ */ jsx(Cypress, { size: 30 }),
-		title: "Cypress",
-		href: "https://www.cypress.io"
-	},
-	{
-		node: /* @__PURE__ */ jsx(Jest, { size: 30 }),
-		title: "Jest",
-		href: "https://jestjs.io"
-	}
-];
-function ProjectPreview({ visual }) {
-	const image = visual === "templo" ? {
-		src: templo_default,
-		alt: "Interface do projeto Templo"
-	} : {
-		src: ss_default,
-		alt: "Interface do portal Social Skate"
-	};
-	return /* @__PURE__ */ jsxs("div", {
+function ProjectPreview({ visual, alt }) {
+	const image = {
+		sratlas: sratlas_default,
+		templo: templo_default,
+		social: ss_default
+	}[visual];
+	return /* @__PURE__ */ jsx("div", {
 		className: "mb-7 overflow-hidden rounded-lg border border-border/80 bg-background/80 transition-colors group-hover:border-primary/50",
-		children: [/* @__PURE__ */ jsxs("div", {
-			className: "flex h-8 items-center gap-1.5 border-b border-border/70 px-3",
-			children: [
-				/* @__PURE__ */ jsx("span", { className: "h-2 w-2 rounded-full bg-muted-foreground/35" }),
-				/* @__PURE__ */ jsx("span", { className: "h-2 w-2 rounded-full bg-muted-foreground/25" }),
-				/* @__PURE__ */ jsx("span", { className: "h-2 w-2 rounded-full bg-primary/70" }),
-				/* @__PURE__ */ jsx("span", { className: "ml-2 h-2 w-24 rounded-full bg-muted-foreground/15" })
-			]
-		}), /* @__PURE__ */ jsx("div", {
+		children: /* @__PURE__ */ jsx("div", {
 			className: "aspect-[1430/863] bg-muted",
 			children: /* @__PURE__ */ jsx("img", {
-				src: image.src,
-				alt: image.alt,
+				src: image,
+				alt,
 				className: "h-full w-full object-cover object-top",
 				loading: "lazy"
 			})
-		})]
+		})
 	});
 }
 function App({ initialLocale }) {
@@ -1046,7 +652,6 @@ function App({ initialLocale }) {
 	const nextLocale = locale === "pt" ? "en" : "pt";
 	const nextLocaleFlag = nextLocale === "pt" ? bra_default : usa_default;
 	const nextLocaleLabel = nextLocale === "pt" ? "BR" : "EN";
-	const resumeUrl = resumeUrls[locale];
 	const featured = t.featured.map((project) => ({
 		...featuredMeta[project.id],
 		...project
@@ -1060,11 +665,6 @@ function App({ initialLocale }) {
 				href: `mailto:${email}`
 			};
 		}
-		if ("id" in link && link.id === "projects") return {
-			...link,
-			label: t.links.projects.label,
-			value: t.links.projects.value
-		};
 		return link;
 	});
 	return /* @__PURE__ */ jsxs("main", {
@@ -1074,7 +674,7 @@ function App({ initialLocale }) {
 				className: "relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-8 md:px-10",
 				children: [/* @__PURE__ */ jsx("span", {
 					className: "font-mono text-xs tracking-widest text-muted-foreground",
-					children: "LR · 2026"
+					children: t.hero.greeting
 				}), /* @__PURE__ */ jsxs("button", {
 					type: "button",
 					"aria-label": t.languageToggleLabel,
@@ -1090,21 +690,17 @@ function App({ initialLocale }) {
 				})]
 			}),
 			/* @__PURE__ */ jsx("section", {
-				className: "relative z-10 mx-auto max-w-6xl px-6 pb-24 pt-16 md:px-10 md:pt-28",
+				className: "relative z-10 mx-auto max-w-6xl px-6 pb-16 pt-10 md:px-10 md:pb-20 md:pt-16",
 				children: /* @__PURE__ */ jsxs(TextFade, {
 					direction: "up",
 					children: [
 						/* @__PURE__ */ jsxs("h1", {
 							className: "text-white text-5xl font-bold leading-[0.95] tracking-tight md:text-7xl lg:text-8xl",
 							children: [
+								"Lucas",
+								" ",
 								/* @__PURE__ */ jsx("span", {
-									className: "mb-4 block font-mono text-2xl font-normal text-muted-foreground md:text-3xl lg:text-4xl",
-									children: t.hero.greeting
-								}),
-								"Lucas ",
-								/* @__PURE__ */ jsx("br", {}),
-								/* @__PURE__ */ jsx("span", {
-									className: "text-gradient",
+									className: "text-gradient block sm:inline",
 									children: "Ribeiro."
 								})
 							]
@@ -1114,58 +710,68 @@ function App({ initialLocale }) {
 							children: t.role
 						}),
 						/* @__PURE__ */ jsx("p", {
-							className: "mt-10 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl",
+							className: "mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl",
 							children: t.hero.summary.map((part, index) => "highlight" in part && part.highlight ? /* @__PURE__ */ jsx("span", {
 								className: "text-foreground",
 								children: part.text
 							}, index) : part.text)
 						}),
 						/* @__PURE__ */ jsx("div", {
-							className: "mt-12 flex flex-wrap gap-2",
-							children: /* @__PURE__ */ jsx(LogoLoop, {
-								logos: techLogos,
-								speed: 50,
-								direction: "left",
-								logoHeight: 30,
-								gap: 60,
-								hoverSpeed: 0,
-								scaleOnHover: true,
-								fadeOut: true,
-								fadeOutColor: "#060a0d",
-								ariaLabel: "Stack"
+							className: "mt-12 max-w-2xl",
+							children: /* @__PURE__ */ jsxs("div", {
+								role: "img",
+								"aria-label": `${t.stackLabel}: React, TypeScript, Node.js, Next.js, NestJS`,
+								className: "flex flex-wrap items-center gap-4",
+								children: [
+									/* @__PURE__ */ jsx("span", {
+										title: "React",
+										className: "inline-flex",
+										children: /* @__PURE__ */ jsx(React, { size: 30 })
+									}),
+									/* @__PURE__ */ jsx("span", {
+										title: "Next.js",
+										className: "inline-flex",
+										children: /* @__PURE__ */ jsx(NextJs, { size: 30 })
+									}),
+									/* @__PURE__ */ jsx("span", {
+										title: "TypeScript",
+										className: "inline-flex",
+										children: /* @__PURE__ */ jsx(TypeScript, { size: 30 })
+									}),
+									/* @__PURE__ */ jsx("span", {
+										title: "Node.js",
+										className: "inline-flex",
+										children: /* @__PURE__ */ jsx(NodeJs, { size: 30 })
+									}),
+									/* @__PURE__ */ jsx("span", {
+										title: "NestJS",
+										className: "inline-flex",
+										children: /* @__PURE__ */ jsx(NestJS, { size: 30 })
+									})
+								]
 							})
 						}),
 						/* @__PURE__ */ jsxs("div", {
 							className: "mt-12 flex flex-wrap items-center gap-4",
-							children: [
-								/* @__PURE__ */ jsxs("a", {
-									href: resumeUrl,
-									download: true,
-									className: "group inline-flex items-center gap-3 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all hover:glow",
-									children: [/* @__PURE__ */ jsx(Download, { className: "h-4 w-4 transition-transform group-hover:translate-y-0.5" }), t.downloadResume]
-								}),
-								/* @__PURE__ */ jsxs("a", {
-									href: "#contact",
-									className: "inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-semibold text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary",
-									children: [/* @__PURE__ */ jsx(Mail, { className: "h-4 w-4" }), t.contact]
-								}),
-								/* @__PURE__ */ jsx("a", {
-									href: resumeUrl,
-									target: "_blank",
-									rel: "noreferrer",
-									className: "font-mono text-xs uppercase tracking-widest text-muted-foreground underline-offset-4 hover:text-foreground hover:underline",
-									children: t.viewPdf
-								})
-							]
+							children: [/* @__PURE__ */ jsxs("a", {
+								href: "#projects",
+								className: "group inline-flex items-center gap-3 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:bg-primary-hover",
+								children: [/* @__PURE__ */ jsx(FolderGit2, { className: "h-4 w-4" }), t.exploreProjects]
+							}), /* @__PURE__ */ jsxs("a", {
+								href: "#contact",
+								className: "inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-semibold text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary",
+								children: [/* @__PURE__ */ jsx(Mail, { className: "h-4 w-4" }), t.contact]
+							})]
 						})
 					]
 				})
 			}),
 			/* @__PURE__ */ jsxs("section", {
+				id: "projects",
 				className: "relative z-10 mx-auto max-w-6xl px-6 pb-32 md:px-10",
 				children: [
 					/* @__PURE__ */ jsxs("div", {
-						className: "mb-8 flex items-end justify-between border-b border-border pb-4",
+						className: "mb-8 flex flex-col items-start justify-between gap-3 border-b border-border pb-4 sm:flex-row sm:items-end",
 						children: [/* @__PURE__ */ jsx("h2", {
 							className: "font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground",
 							children: t.featuredProjects
@@ -1178,26 +784,23 @@ function App({ initialLocale }) {
 						})]
 					}),
 					/* @__PURE__ */ jsx("div", {
-						className: "mb-24 grid gap-px overflow-hidden rounded-2xl border border-border/70 bg-border/60 md:grid-cols-2",
-						children: featured.map(({ year, title, description, stack: techs, icon: Icon, url, visual }) => /* @__PURE__ */ jsxs("a", {
+						className: "mb-24 grid gap-px overflow-hidden rounded-2xl border border-border/70 bg-border/60 md:grid-cols-2 lg:grid-cols-3",
+						children: featured.map(({ year, title, description, stack: techs, url, visual, imageAlt }) => /* @__PURE__ */ jsxs("a", {
 							href: url,
 							target: "_blank",
 							rel: "noopener noreferrer",
-							className: "group relative flex flex-col justify-between bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:p-7",
+							className: "group relative flex flex-col justify-between bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:p-7",
 							children: [/* @__PURE__ */ jsxs("div", { children: [
-								/* @__PURE__ */ jsx(ProjectPreview, { visual }),
+								/* @__PURE__ */ jsx(ProjectPreview, {
+									visual,
+									alt: imageAlt
+								}),
 								/* @__PURE__ */ jsxs("div", {
-									className: "flex items-center justify-between",
-									children: [/* @__PURE__ */ jsx("div", {
-										className: "flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-background transition-colors group-hover:border-primary group-hover:text-primary",
-										children: /* @__PURE__ */ jsx(Icon, { className: "h-5 w-5" })
-									}), /* @__PURE__ */ jsxs("div", {
-										className: "flex items-center gap-3",
-										children: [/* @__PURE__ */ jsx("span", {
-											className: "font-mono text-xs tracking-widest text-muted-foreground",
-											children: year
-										}), /* @__PURE__ */ jsx(ArrowUpRight, { className: "h-5 w-5 text-muted-foreground transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary" })]
-									})]
+									className: "flex items-center justify-end gap-3",
+									children: [/* @__PURE__ */ jsx("span", {
+										className: "font-mono text-xs tracking-widest text-muted-foreground",
+										children: year
+									}), /* @__PURE__ */ jsx(ArrowUpRight, { className: "h-5 w-5 text-muted-foreground transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary" })]
 								}),
 								/* @__PURE__ */ jsx("h3", {
 									className: "mt-6 text-lg font-semibold leading-tight text-foreground md:text-xl",
@@ -1223,45 +826,44 @@ function App({ initialLocale }) {
 							children: t.experience
 						})
 					}),
-					/* @__PURE__ */ jsx("div", {
-						className: "mb-24 grid gap-px overflow-hidden rounded-2xl border border-border/70 bg-border/60 md:grid-cols-3",
-						children: t.experienceItems.map(({ company, description, location, period, role, url }) => /* @__PURE__ */ jsxs("a", {
-							href: url,
-							target: "_blank",
-							rel: "noopener noreferrer",
-							className: "group relative flex flex-col bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:p-8",
-							children: [
-								/* @__PURE__ */ jsxs("div", {
-									className: "flex items-center justify-between",
-									children: [/* @__PURE__ */ jsx("div", {
-										className: "flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-background transition-colors group-hover:border-primary group-hover:text-primary",
-										children: /* @__PURE__ */ jsx(BriefcaseBusiness, { className: "h-5 w-5" })
-									}), /* @__PURE__ */ jsx(ArrowUpRight, { className: "h-5 w-5 text-muted-foreground transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary" })]
-								}),
-								/* @__PURE__ */ jsx("h3", {
-									className: "mt-6 text-lg font-semibold leading-tight text-foreground md:text-xl",
-									children: company
-								}),
-								/* @__PURE__ */ jsx("p", {
-									className: "mt-2 text-sm font-medium leading-tight text-foreground",
-									children: role
-								}),
-								/* @__PURE__ */ jsxs("div", {
-									className: "mt-3 flex flex-wrap gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground",
-									children: [
-										/* @__PURE__ */ jsx("span", { children: period }),
-										/* @__PURE__ */ jsx("span", {
-											"aria-hidden": "true",
-											children: "/"
-										}),
-										/* @__PURE__ */ jsx("span", { children: location })
-									]
-								}),
-								/* @__PURE__ */ jsx("p", {
-									className: "mt-3 text-sm leading-relaxed text-muted-foreground",
-									children: description
-								})
-							]
+					/* @__PURE__ */ jsx("ol", {
+						className: "mb-24 divide-y divide-border/70",
+						children: t.experienceItems.map(({ company, description, location, period, role, url }) => /* @__PURE__ */ jsx("li", {
+							className: "py-8 first:pt-0 last:pb-0",
+							children: /* @__PURE__ */ jsxs("a", {
+								href: url,
+								target: url.startsWith("http") ? "_blank" : void 0,
+								rel: url.startsWith("http") ? "noopener noreferrer" : void 0,
+								className: "group block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background",
+								children: [
+									/* @__PURE__ */ jsxs("div", {
+										className: "flex items-center justify-between",
+										children: [/* @__PURE__ */ jsx("h3", {
+											className: "text-lg font-semibold leading-tight text-foreground md:text-xl",
+											children: company
+										}), /* @__PURE__ */ jsx(ArrowUpRight, { className: "h-5 w-5 shrink-0 text-muted-foreground transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary" })]
+									}),
+									/* @__PURE__ */ jsx("p", {
+										className: "mt-2 text-sm font-medium leading-tight text-foreground",
+										children: role
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "mt-3 flex flex-wrap gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground",
+										children: [
+											/* @__PURE__ */ jsx("span", { children: period }),
+											/* @__PURE__ */ jsx("span", {
+												"aria-hidden": "true",
+												children: "/"
+											}),
+											/* @__PURE__ */ jsx("span", { children: location })
+										]
+									}),
+									/* @__PURE__ */ jsx("p", {
+										className: "mt-3 text-sm leading-relaxed text-muted-foreground",
+										children: description
+									})
+								]
+							})
 						}, company))
 					}),
 					/* @__PURE__ */ jsx("div", {
@@ -1273,20 +875,17 @@ function App({ initialLocale }) {
 						})
 					}),
 					/* @__PURE__ */ jsx("div", {
-						className: "grid gap-px overflow-hidden rounded-2xl border border-border/70 bg-border/60 md:grid-cols-2",
-						children: links.map(({ label, value, href, icon: Icon }) => {
+						className: "flex flex-col items-start",
+						children: links.map(({ label, value, href, icon: Icon }, index) => {
 							const inner = /* @__PURE__ */ jsxs(Fragment, { children: [/* @__PURE__ */ jsxs("div", {
-								className: "flex min-w-0 items-center gap-5",
-								children: [/* @__PURE__ */ jsx("div", {
-									className: "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border bg-background transition-colors group-hover:border-primary group-hover:text-primary",
-									children: /* @__PURE__ */ jsx(Icon, { className: "h-5 w-5" })
-								}), /* @__PURE__ */ jsxs("div", {
+								className: "flex min-w-0 items-center gap-3",
+								children: [/* @__PURE__ */ jsx(Icon, { className: "h-5 w-5 shrink-0 text-muted-foreground group-hover:text-primary" }), /* @__PURE__ */ jsxs("div", {
 									className: "min-w-0",
 									children: [/* @__PURE__ */ jsx("p", {
 										className: "font-mono text-xs uppercase tracking-widest text-muted-foreground",
 										children: label
 									}), /* @__PURE__ */ jsx("p", {
-										className: "mt-1 break-all text-base font-medium text-foreground md:text-lg",
+										className: `mt-1 break-all font-medium text-foreground ${index === 0 ? "text-2xl md:text-3xl" : "text-base md:text-lg"}`,
 										children: value
 									})]
 								})]
@@ -1295,7 +894,7 @@ function App({ initialLocale }) {
 								href,
 								target: href.startsWith("http") ? "_blank" : void 0,
 								rel: "noreferrer",
-								className: "group relative flex items-center justify-between bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:p-8",
+								className: `group flex max-w-full items-center gap-4 rounded-sm py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background ${index === 0 ? "mb-6" : ""}`,
 								children: inner
 							}, label);
 						})
