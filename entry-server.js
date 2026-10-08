@@ -243,22 +243,19 @@ var translations = {
 	pt: {
 		languageToggleLabel: "Trocar idioma para inglês",
 		role: "Engenheiro de Software Sênior",
-		hero: {
-			greeting: "Olá, sou o Lucas!",
-			summary: [
-				{ text: "Tenho " },
-				{
-					text: "mais de 7 anos de experiência",
-					highlight: true
-				},
-				{ text: " no desenvolvimento de aplicações web com " },
-				{
-					text: "React, TypeScript e Next.js",
-					highlight: true
-				},
-				{ text: ". Atuo no Front-End e no Back-End, da arquitetura das aplicações ao deploy." }
-			]
-		},
+		hero: { summary: [
+			{ text: "Tenho " },
+			{
+				text: "mais de 7 anos de experiência",
+				highlight: true
+			},
+			{ text: " no desenvolvimento de aplicações web com " },
+			{
+				text: "React, TypeScript e Next.js",
+				highlight: true
+			},
+			{ text: ". Atuo no Front-End e no Back-End, da arquitetura das aplicações ao deploy." }
+		] },
 		stackLabel: "Tecnologias com que trabalho",
 		exploreProjects: "Ver projetos",
 		experience: "Experiência",
@@ -376,22 +373,19 @@ var translations = {
 	en: {
 		languageToggleLabel: "Switch language to Portuguese",
 		role: "Senior Software Engineer",
-		hero: {
-			greeting: "Hi, I’m Lucas!",
-			summary: [
-				{ text: "I have " },
-				{
-					text: "more than 7 years of experience",
-					highlight: true
-				},
-				{ text: " developing web applications with " },
-				{
-					text: "React, TypeScript, and Next.js",
-					highlight: true
-				},
-				{ text: ". I work across Front-End and Back-End, from application architecture to deployment." }
-			]
-		},
+		hero: { summary: [
+			{ text: "I have " },
+			{
+				text: "more than 7 years of experience",
+				highlight: true
+			},
+			{ text: " developing web applications with " },
+			{
+				text: "React, TypeScript, and Next.js",
+				highlight: true
+			},
+			{ text: ". I work across Front-End and Back-End, from application architecture to deployment." }
+		] },
 		stackLabel: "Technologies I work with",
 		exploreProjects: "View projects",
 		experience: "Experience",
@@ -673,8 +667,8 @@ function App({ initialLocale }) {
 			/* @__PURE__ */ jsxs("header", {
 				className: "relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-8 md:px-10",
 				children: [/* @__PURE__ */ jsx("span", {
-					className: "font-mono text-xs tracking-widest text-muted-foreground",
-					children: t.hero.greeting
+					className: "text-sm font-medium tracking-tight text-foreground",
+					children: "Lucas Ribeiro"
 				}), /* @__PURE__ */ jsxs("button", {
 					type: "button",
 					"aria-label": t.languageToggleLabel,
@@ -694,19 +688,8 @@ function App({ initialLocale }) {
 				children: /* @__PURE__ */ jsxs(TextFade, {
 					direction: "up",
 					children: [
-						/* @__PURE__ */ jsxs("h1", {
-							className: "text-white text-5xl font-bold leading-[0.95] tracking-tight md:text-7xl lg:text-8xl",
-							children: [
-								"Lucas",
-								" ",
-								/* @__PURE__ */ jsx("span", {
-									className: "text-gradient block sm:inline",
-									children: "Ribeiro."
-								})
-							]
-						}),
-						/* @__PURE__ */ jsx("p", {
-							className: "mt-6 font-mono text-xs uppercase tracking-[0.3em] text-primary",
+						/* @__PURE__ */ jsx("h1", {
+							className: "max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl",
 							children: t.role
 						}),
 						/* @__PURE__ */ jsx("p", {
